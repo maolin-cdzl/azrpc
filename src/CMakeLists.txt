@@ -1,6 +1,7 @@
 protobuf_generate_cpp(AZRPC_PB_SRCS AZRPC_PB_HDRS proto/azrpc.proto)
 
 add_library(azrpc STATIC
+	azrpc_types.cxx
 	clock.cxx
 	ev_looper_adapter.cxx
 	client_channel.cxx
@@ -10,6 +11,7 @@ add_library(azrpc STATIC
 	ev_looper_adapter.hpp
 	client_channel.hpp
 	eventid_generator.hpp
+	${CMAKE_SOURCE_DIR}/include/azrpc/azrpc_types.hpp
 	${CMAKE_SOURCE_DIR}/include/azrpc/i_azrpc_callback.hpp
 	${CMAKE_SOURCE_DIR}/include/azrpc/i_client_channel.hpp
 	${CMAKE_SOURCE_DIR}/include/azrpc/i_looper_adapter.hpp
