@@ -72,10 +72,6 @@ class ServiceGenerator {
   // Generate the CallMethod() method of the service.
   void GenerateCallMethod(google::protobuf::io::Printer* printer);
 
-  // Generate the Get{Request,Response}Prototype() methods.
-  void GenerateGetPrototype(RequestOrResponse which,
-                            google::protobuf::io::Printer* printer);
-
   // Generate the stub's implementations of the service methods.
   void GenerateStubMethods(google::protobuf::io::Printer* printer);
 

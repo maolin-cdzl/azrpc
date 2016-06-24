@@ -159,8 +159,6 @@ void ServiceGenerator::GenerateImplementation(io::Printer* printer) {
   // Generate methods of the interface.
   GenerateNotImplementedMethods(printer);
   GenerateCallMethod(printer);
-  GenerateGetPrototype(REQUEST, printer);
-  GenerateGetPrototype(RESPONSE, printer);
 
   // Generate stub implementation.
   printer->Print(vars_,
@@ -233,44 +231,6 @@ void ServiceGenerator::GenerateCallMethod(io::Printer* printer) {
     "\n");
 }
 
-void ServiceGenerator::GenerateGetPrototype(RequestOrResponse which,
-                                            io::Printer* printer) {
-  if (which == REQUEST) {
-    printer->Print(vars_,
-      "const ::google::protobuf::Message& $classname$::GetRequestPrototype(\n");
-  } else {
-    printer->Print(vars_,
-      "const ::google::protobuf::Message& $classname$::GetResponsePrototype(\n");
-  }
-
-  printer->Print(vars_,
-    "    const ::google::protobuf::MethodDescriptor* method) const {\n"
-    "  GOOGLE_DCHECK_EQ(method->service(), descriptor());\n"
-    "  switch(method->index()) {\n");
-
-  for (int i = 0; i < descriptor_->method_count(); i++) {
-    const MethodDescriptor* method = descriptor_->method(i);
-    const Descriptor* type =
-      (which == REQUEST) ? method->input_type() : method->output_type();
-
-    map<string, string> sub_vars;
-    sub_vars["index"] = SimpleItoa(i);
-    sub_vars["type"] = ClassName(type, true);
-
-    printer->Print(sub_vars,
-      "    case $index$:\n"
-      "      return $type$::default_instance();\n");
-  }
-
-  printer->Print(vars_,
-    "    default:\n"
-    "      GOOGLE_LOG(FATAL) << \"Bad method index; this should never happen.\";\n"
-    "      return *reinterpret_cast< ::google::protobuf::Message*>(NULL);\n"
-    "  }\n"
-    "}\n"
-    "\n");
-}
-
 void ServiceGenerator::GenerateStubMethods(io::Printer* printer) {
   for (int i = 0; i < descriptor_->method_count(); i++) {
     const MethodDescriptor* method = descriptor_->method(i);
@@ -284,7 +244,7 @@ void ServiceGenerator::GenerateStubMethods(io::Printer* printer) {
     printer->Print(sub_vars,
       "void $classname$_Stub::$name$(const $input_type$* argument,\n"
       "                              const std::shared_ptr<azrpc::IAzRpcCallback>& callback,\n"
-      "                              int timeout=0) {\n"
+      "                              int timeout) {\n"
       "  channel_->callMethod(\n"
       "                        $classname$::descriptor()->method($index$),\n"
       "                        argument, callback, timeout);\n"

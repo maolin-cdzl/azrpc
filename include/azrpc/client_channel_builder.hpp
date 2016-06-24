@@ -1,5 +1,6 @@
 #pragma once
 
+#include <ev.h>
 #include "azrpc/i_looper_adapter.hpp"
 #include "azrpc/i_client_channel.hpp"
 
