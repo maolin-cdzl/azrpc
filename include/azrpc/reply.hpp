@@ -16,6 +16,9 @@ public:
 	Reply(IServerChannel* channel,zmsg_t** p_envelope,const google::protobuf::Descriptor* descriptor,int64_t id); 
 	~Reply();
 
+	Reply(const Reply&) = delete;
+	Reply& operator = (const Reply&) = delete;
+
 	int64_t event_id() const;
 	const google::protobuf::Descriptor* descriptor() const;
 
