@@ -5,6 +5,7 @@
 
 namespace azrpc {
 
+class Reply;
 
 class IService {
 public:
@@ -18,7 +19,8 @@ public:
 
 	virtual void callMethod(
 		const google::protobuf::MethodDescriptor* method,
-		const google::protobuf::Message* request
+		const google::protobuf::Message* request,
+		const std::shared_ptr<Reply>& reply
 		) = 0;
 
 };

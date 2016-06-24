@@ -25,7 +25,7 @@ int ClientChannel::connect(const std::string& address) {
 }
 
 int ClientChannel::start(const std::shared_ptr<ILooperAdapter>& adapter) {
-	if( m_zsock == nullptr ) {
+	if( m_loop_adpater ) {
 		return -1;
 	}
 	adapter->registerChannel(m_zsock,
