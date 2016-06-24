@@ -1,0 +1,27 @@
+syntax = "proto2";
+package azrpc;
+
+message AzRpcRequest {
+	optional int64			event_id		= 1;
+	optional string			service_name	= 2;
+	optional string			method_name		= 3;
+	optional bytes			argument		= 4;
+}
+
+message AzRpcResponse {
+	enum RpcError {
+		OK						= 0;
+		TIMEOUT					= 1;
+		WOULD_BLOCK				= 2;
+		CANCELLED				= 3;
+		TERMINATED				= 4;
+		NO_SUCH_SERVICE			= 5;
+		NO_SUCH_METHOD			= 6;
+		NO_IMPLEMENTED			= 7;
+		PROTOCOL_ERROR			= 8;
+	}
+	optional int64				event_id		= 1;
+	optional RpcError			error			= 2 [ default = OK ];
+	optional string				err_msg			= 3;
+	optional bytes				response		= 4;
+}
