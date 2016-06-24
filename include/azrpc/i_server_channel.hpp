@@ -1,7 +1,7 @@
 #pragma once
 
 #include <memory>
-
+#include <czmq.h>
 #include "azrpc/i_service.hpp"
 
 namespace azrpc {

@@ -1,6 +1,11 @@
 #pragma once
 
+#include <memory>
+#include <string>
+#include <unordered_map>
+#include "zeputils/zprotobuf.hpp"
 #include "azrpc/i_server_channel.hpp"
+#include "azrpc/i_looper_adapter.hpp"
 
 namespace azrpc {
 
@@ -21,13 +26,11 @@ private:
 	ServerChannel();
 
 	int bind(const std::string& address);
-	int start(const std::shared_ptr<ILoopAdapter>& adapter);
+	int start(const std::shared_ptr<ILooperAdapter>& adapter);
 	void stop();
 
 	void handleReadable();
 	void handleTimeout();
-
-	void handleRequest(const azrpc::AzRpcRequest& request);
 private:
 	std::unordered_map<std::string,std::shared_ptr<IService>>	m_service_map;
 	std::shared_ptr<ILooperAdapter>				m_loop_adapter;

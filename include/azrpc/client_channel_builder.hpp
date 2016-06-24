@@ -8,9 +8,9 @@ namespace azrpc {
 class ClientChannelBuilder {
 public:
 	// only one loop adapter make sense
-	ClientChannelBuilder& bindLoop(const std::shared_ptr<ILooperAdapter>& adapter);
+	ClientChannelBuilder& withLoop(const std::shared_ptr<ILooperAdapter>& adapter);
 
-	ClientChannelBuilder& bindEvLoop(struct ev_loop* loop);
+	ClientChannelBuilder& withEvLoop(struct ev_loop* loop);
 
 	ClientChannelBuilder& connect(const std::string& address);
 

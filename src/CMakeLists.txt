@@ -8,10 +8,13 @@ add_library(azrpc STATIC
 	eventid_generator.cxx
 	client_channel_builder.cxx
 	reply.cxx
+	server_channel.cxx
+	server_channel_builder.cxx
 	clock.hpp
 	ev_looper_adapter.hpp
 	client_channel.hpp
 	eventid_generator.hpp
+	server_channel.hpp
 	${CMAKE_SOURCE_DIR}/include/azrpc/azrpc_types.hpp
 	${CMAKE_SOURCE_DIR}/include/azrpc/reply.hpp
 	${CMAKE_SOURCE_DIR}/include/azrpc/i_azrpc_callback.hpp
@@ -19,6 +22,8 @@ add_library(azrpc STATIC
 	${CMAKE_SOURCE_DIR}/include/azrpc/i_looper_adapter.hpp
 	${CMAKE_SOURCE_DIR}/include/azrpc/client_channel_builder.hpp
 	${CMAKE_SOURCE_DIR}/include/azrpc/i_service.hpp
+	${CMAKE_SOURCE_DIR}/include/azrpc/i_server_channel.hpp
+	${CMAKE_SOURCE_DIR}/include/azrpc/server_channel_builder.hpp
 	${AZRPC_PB_SRCS}
 	${AZRPC_PB_SRCS}
 )

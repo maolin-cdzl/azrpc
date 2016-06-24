@@ -1,4 +1,6 @@
 #include "server_channel.hpp"
+#include "azrpc/reply.hpp"
+#include "azrpc.pb.h"
 
 
 namespace azrpc {
@@ -15,20 +17,35 @@ ServerChannel::~ServerChannel() {
 void ServerChannel::registerService(const std::shared_ptr<IService>& service) {
 }
 
-int ServerChannel::sendReply(zmsg_t** envelop,int64_t event_id,RpcError err,const std::string& err_msg,const std::string& response) {
+int ServerChannel::sendReply(zmsg_t** p_envelope,int64_t event_id,RpcError err,const std::string& err_msg,const std::string& response) {
+	azrpc::AzRpcResponse msg;
+	msg.set_event_id(event_id);
+	msg.set_error((azrpc::AzRpcResponse_RpcError)err);
+	if( !err_msg.empty() ) {
+		msg.set_err_msg(err_msg);
+	}
+	if( !response.empty() ) {
+		msg.set_response(response);
+	}
+
+	if( -1 == zmsg_sendm(p_envelope,m_zsock) ) {
+		return -1;
+	}
+	return m_zp.send(m_zsock,&msg,false,0);
 }
 
 
 int ServerChannel::bind(const std::string& address) {
+	return zsock_bind(m_zsock,"%s",address.c_str());
 }
 
-int ServerChannel::start(const std::shared_ptr<ILoopAdapter>& adapter) {
-	if( m_loop_adpater ) {
+int ServerChannel::start(const std::shared_ptr<ILooperAdapter>& adapter) {
+	if( m_loop_adapter ) {
 		return -1;
 	}
 	adapter->registerChannel(m_zsock,
-			std::bind(&ClientChannel::handleReadable,this),
-			std::bind(&ClientChannel::handleTimeout,this)
+			std::bind(&ServerChannel::handleReadable,this),
+			std::bind(&ServerChannel::handleTimeout,this)
 			);
 	m_loop_adapter = adapter;
 	return 0;
@@ -42,12 +59,51 @@ void ServerChannel::stop() {
 }
 
 void ServerChannel::handleReadable() {
+	zmsg_t* envelope = m_zp.envelope(m_zsock);
+	std::unique_ptr<azrpc::AzRpcRequest> request( (azrpc::AzRpcRequest*)m_zp.recv(m_zsock,azrpc::AzRpcRequest::descriptor()));
+	zsock_flush(m_zsock);
+
+	do {
+		if( request == nullptr ) {
+			break;
+		}
+		if( !request->has_service_name() || !request->has_method_name() || !request->has_event_id() ) {
+			break;
+		}
+		auto it = m_service_map.find(request->service_name());
+		if( it == m_service_map.end() ) {
+			break;
+		}
+		auto service = it->second;
+		auto method = service->GetDescriptor()->FindMethodByName(request->method_name());
+		if( method == nullptr ) {
+			break;
+		}
+
+		auto input_type = method->input_type();
+		auto output_type = method->output_type();
+		if( (input_type && !request->has_argument()) || (input_type == nullptr && request->has_argument()) ) {
+			return;
+		}
+		std::shared_ptr<google::protobuf::Message> input;
+		if( input_type ) {
+			input.reset(build_message(input_type,request->argument().c_str(),request->argument().size()));
+			if( input == nullptr ) {
+				break;
+			}
+		}
+		std::shared_ptr<Reply> reply(new Reply(this,&envelope,output_type,request->event_id()));
+		service->callMethod(method,input,reply);
+		return;
+	} while(0);
+
+	if( envelope ) {
+		zmsg_destroy(&envelope);
+	}
 }
 
 void ServerChannel::handleTimeout() {
-}
-
-void ServerChannel::handleRequest(const azrpc::AzRpcRequest& request) {
+	// nothing to do
 }
 
 

@@ -19,7 +19,7 @@ public:
 
 	virtual void callMethod(
 		const google::protobuf::MethodDescriptor* method,
-		const google::protobuf::Message* request,
+		const std::shared_ptr<google::protobuf::Message> request,
 		const std::shared_ptr<Reply>& reply
 		) = 0;
 

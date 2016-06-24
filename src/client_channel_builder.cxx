@@ -4,12 +4,12 @@
 
 namespace azrpc {
 
-ClientChannelBuilder& ClientChannelBuilder::bindLoop(const std::shared_ptr<ILooperAdapter>& adapter) {
+ClientChannelBuilder& ClientChannelBuilder::withLoop(const std::shared_ptr<ILooperAdapter>& adapter) {
 	m_loop_adapter = adapter;
 	return *this;
 }
 
-ClientChannelBuilder& ClientChannelBuilder::bindEvLoop(struct ev_loop* loop) {
+ClientChannelBuilder& ClientChannelBuilder::withEvLoop(struct ev_loop* loop) {
 	m_loop_adapter = std::shared_ptr<ILooperAdapter>(new EvLooperAdapter(loop));
 	return *this;
 }
