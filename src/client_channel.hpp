@@ -9,7 +9,7 @@
 #include <ev.h>
 #include <czmq.h>
 #include "zeputils/zprotobuf.hpp"
-#include "azrpc/i_azrpc_channel.hpp"
+#include "azrpc/i_client_channel.hpp"
 #include "eventid_generator.hpp"
 #include "azrpc.pb.h"
 
@@ -17,7 +17,7 @@ namespace azrpc {
 
 class IAzRpcCallback;
 class ILooperAdapter;
-class AzRpcChannel;
+class ClientChannel;
 
 struct RemoteCallEntry {
 	int64_t										event_id;
@@ -26,11 +26,11 @@ struct RemoteCallEntry {
 	std::weak_ptr<IAzRpcCallback>				callback;
 };
 
-class AzRpcChannel : public IAzRpcChannel {
+class ClientChannel : public IClientChannel {
 public:
-	virtual ~AzRpcChannel();
-	AzRpcChannel(const AzRpcChannel&) = delete;
-	AzRpcChannel& operator = (const AzRpcChannel&) = delete;
+	virtual ~ClientChannel();
+	ClientChannel(const ClientChannel&) = delete;
+	ClientChannel& operator = (const ClientChannel&) = delete;
 
 	virtual int callMethod(
 			const google::protobuf::MethodDescriptor* method,
@@ -38,9 +38,9 @@ public:
 			const std::shared_ptr<IAzRpcCallback>& callback,
 			int32_t timeout);
 
-	friend class AzRpcChannelBuilder;
+	friend class ClientChannelBuilder;
 private:
-	AzRpcChannel();
+	ClientChannel();
 
 	int connect(const std::string& address);
 	int start(const std::shared_ptr<ILooperAdapter>& adapter);

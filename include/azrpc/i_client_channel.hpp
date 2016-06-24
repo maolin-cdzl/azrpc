@@ -9,9 +9,9 @@
 
 namespace azrpc {
 
-class IAzRpcChannel {
+class IClientChannel {
 public:
-	virtual ~IAzRpcChannel() {}
+	virtual ~IClientChannel() {}
 
 	// Return 0 means success, -1 if any error
 	virtual int callMethod(

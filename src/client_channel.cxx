@@ -1,7 +1,7 @@
 #include <stdint.h>
 #include <vector>
 #include <memory>
-#include "azrpc_channel.hpp"
+#include "client_channel.hpp"
 #include "clock.hpp"
 #include "azrpc.pb.h"
 
@@ -10,40 +10,40 @@
 
 namespace azrpc {
 
-AzRpcChannel::AzRpcChannel()
+ClientChannel::ClientChannel()
 	: m_zsock(zsock_new(ZMQ_DEALER))
 {
 }
 
-AzRpcChannel::~AzRpcChannel() {
+ClientChannel::~ClientChannel() {
 	stop();
 	zsock_destroy(&m_zsock);
 }
 
-int AzRpcChannel::connect(const std::string& address) {
+int ClientChannel::connect(const std::string& address) {
 	return zsock_connect(m_zsock,"%s",address.c_str());
 }
 
-int AzRpcChannel::start(const std::shared_ptr<ILooperAdapter>& adapter) {
+int ClientChannel::start(const std::shared_ptr<ILooperAdapter>& adapter) {
 	if( m_zsock == nullptr ) {
 		return -1;
 	}
 	adapter->registerChannel(m_zsock,
-			std::bind(&AzRpcChannel::handleReadable,this),
-			std::bind(&AzRpcChannel::handleTimeout,this)
+			std::bind(&ClientChannel::handleReadable,this),
+			std::bind(&ClientChannel::handleTimeout,this)
 			);
 	m_loop_adapter = adapter;
 	return 0;
 }
 
-void AzRpcChannel::stop() {
+void ClientChannel::stop() {
 	if( m_loop_adapter != nullptr ) {
 		m_loop_adapter->unregisterChannel();
 		m_loop_adapter.reset();
 	}
 }
 
-void AzRpcChannel::handleReadable() {
+void ClientChannel::handleReadable() {
 	int zevents = zsock_events(m_zsock);
 
 	while( zevents & ZMQ_POLLIN ) {
@@ -56,7 +56,7 @@ void AzRpcChannel::handleReadable() {
 	checkSetTimer();
 }
 
-void AzRpcChannel::handleTimeout() {
+void ClientChannel::handleTimeout() {
 	const int64_t now = clock_time();
 	std::vector<std::shared_ptr<RemoteCallEntry>> events;
 	for(auto it = m_deadline_map.begin(); it != m_deadline_map.end();) {
@@ -81,7 +81,7 @@ void AzRpcChannel::handleTimeout() {
 	checkSetTimer();
 }
 
-int64_t AzRpcChannel::getTimeout() {
+int64_t ClientChannel::getTimeout() {
 	if( !m_deadline_map.empty() ) {
 		const int64_t now = clock_time();
 		auto it = m_deadline_map.begin();
@@ -95,7 +95,7 @@ int64_t AzRpcChannel::getTimeout() {
 	}
 }
 
-void AzRpcChannel::checkSetTimer() {
+void ClientChannel::checkSetTimer() {
 	int64_t timeout = getTimeout();
 	if( timeout > 0 ) {
 		m_loop_adapter->setTimer(timeout);
@@ -104,7 +104,7 @@ void AzRpcChannel::checkSetTimer() {
 	}
 }
 
-int AzRpcChannel::callMethod(
+int ClientChannel::callMethod(
 		const google::protobuf::MethodDescriptor* method,
 		const google::protobuf::Message* argument,
 		const std::shared_ptr<IAzRpcCallback>& callback,
@@ -142,7 +142,7 @@ int AzRpcChannel::callMethod(
 	return 0;
 }
 
-void AzRpcChannel::handleResponse(const azrpc::AzRpcResponse& response) {
+void ClientChannel::handleResponse(const azrpc::AzRpcResponse& response) {
 	if( !response.has_event_id() || !response.has_error() ) {
 		return;
 	}

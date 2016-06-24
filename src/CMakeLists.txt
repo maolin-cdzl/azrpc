@@ -3,17 +3,17 @@ protobuf_generate_cpp(AZRPC_PB_SRCS AZRPC_PB_HDRS proto/azrpc.proto)
 add_library(azrpc STATIC
 	clock.cxx
 	ev_looper_adapter.cxx
-	azrpc_channel.cxx
+	client_channel.cxx
 	eventid_generator.cxx
-	channel_builder.cxx
+	client_channel_builder.cxx
 	clock.hpp
 	ev_looper_adapter.hpp
-	azrpc_channel.hpp
+	client_channel.hpp
 	eventid_generator.hpp
 	${CMAKE_SOURCE_DIR}/include/azrpc/i_azrpc_callback.hpp
-	${CMAKE_SOURCE_DIR}/include/azrpc/i_azrpc_channel.hpp
+	${CMAKE_SOURCE_DIR}/include/azrpc/i_client_channel.hpp
 	${CMAKE_SOURCE_DIR}/include/azrpc/i_looper_adapter.hpp
-	${CMAKE_SOURCE_DIR}/include/azrpc/channel_builder.hpp
+	${CMAKE_SOURCE_DIR}/include/azrpc/client_channel_builder.hpp
 	${AZRPC_PB_SRCS}
 	${AZRPC_PB_SRCS}
 )
@@ -33,6 +33,6 @@ target_link_libraries(azrpc PUBLIC
 	protobuf
 )
 
-install(DIRECTORY include/ DESTINATION include FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/ DESTINATION include FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
 install(TARGETS azrpc DESTINATION lib/)
 
