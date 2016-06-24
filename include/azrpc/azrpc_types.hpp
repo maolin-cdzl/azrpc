@@ -2,8 +2,6 @@
 
 #include <string>
 #include <exception>
-#include <google/protobuf/descriptor.h>
-#include <google/protobuf/message.h>
 
 namespace azrpc {
 
@@ -28,27 +26,6 @@ public:
 	virtual const char* what() const throw();
 private:
 	std::string error_msg;
-};
-
-class Reply{
-public:
-	Reply(const google::protobuf::Descriptor* descriptor,int64_t id); 
-
-	int64_t event_id() const;
-	const google::protobuf::Descriptor* descriptor() const;
-	RpcError error() const;
-	const std::string& err_msg() const;
-
-	void reply(const google::protobuf::Message* res) throw(BadReplyMessage);
-	void error(RpcError err);
-	void error(RpcError err,const std::string& err_msg);
-	
-private:
-	const google::protobuf::Descriptor*			m_descriptor;
-	const int64_t								m_event_id;
-	RpcError									m_err;
-	std::string									m_err_msg;
-	std::string									m_reply_buf;
 };
 
 }

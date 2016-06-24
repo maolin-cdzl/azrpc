@@ -18,7 +18,7 @@ public:
 
 	virtual void callMethod(
 		const google::protobuf::MethodDescriptor* method,
-		const google::protobuf::Message* request,
+		const google::protobuf::Message* request
 		) = 0;
 
 };
