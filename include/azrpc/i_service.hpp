@@ -13,13 +13,9 @@ public:
 
 	virtual const google::protobuf::ServiceDescriptor* GetDescriptor() = 0;
 
-	virtual const google::protobuf::Message& GetRequestPrototype(const google::protobuf::MethodDescriptor*) const = 0;
-
-	virtual const google::protobuf::Message& GetResponsePrototype(const google::protobuf::MethodDescriptor*) const = 0;
-
 	virtual void callMethod(
 		const google::protobuf::MethodDescriptor* method,
-		const std::shared_ptr<google::protobuf::Message> request,
+		const std::shared_ptr<google::protobuf::Message>& request,
 		const std::shared_ptr<Reply>& reply
 		) = 0;
 

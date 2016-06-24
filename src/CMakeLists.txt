@@ -46,3 +46,4 @@ target_link_libraries(azrpc PUBLIC
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/ DESTINATION include FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
 install(TARGETS azrpc DESTINATION lib/)
 
+add_subdirectory(plugin)
