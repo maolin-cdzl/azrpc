@@ -42,6 +42,7 @@ void FileGenerator::GenerateHeader(io::Printer* printer) {
     "#define AZRPC_$filename_identifier$__INCLUDED\n"
     "\n"
     "#include <string>\n"
+    "#include <memory>\n"
     "#include <azrpc/i_service.hpp>\n"
     "#include <azrpc/reply.hpp>\n"
     "#include <azrpc/i_client_channel.hpp>\n"
