@@ -8,7 +8,7 @@ namespace azrpc {
 class IAzRpcCallback {
 public:
 	virtual ~IAzRpcCallback() { }
-	virtual void onResponse(RpcError err,const std::string* err_msg,const google::protobuf::Message* response) = 0;
+	virtual void onResponse(RpcError err,const std::string& err_msg,const std::shared_ptr<google::protobuf::Message>& response) = 0;
 };
 
 }

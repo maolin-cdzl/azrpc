@@ -45,7 +45,6 @@ void ClientChannel::stop() {
 }
 
 void ClientChannel::handleReadable() {
-	LOG(DEBUG) << "ClientChannel::handleReadable";
 	int zevents = zsock_events(m_zsock);
 
 	while( zevents & ZMQ_POLLIN ) {
@@ -113,7 +112,6 @@ int ClientChannel::callMethod(
 		const google::protobuf::Message* argument,
 		const std::shared_ptr<IAzRpcCallback>& callback,
 		int32_t timeout) {
-	LOG(DEBUG) << "ClientChannel::callMethod";
 	azrpc::AzRpcRequest request;
 	request.set_event_id(m_eid_generator.next());
 	request.set_service_name(method->service()->full_name());
@@ -142,17 +140,14 @@ int ClientChannel::callMethod(
 	if( timeout != 0 ) {
 		rc->deadline = clock_time() + timeout;
 		m_deadline_map.insert(std::make_pair(rc->deadline,rc->event_id));
-		LOG(DEBUG) << "success request with timeout in " << timeout;
 	} else {
 		rc->deadline = 0;
-		LOG(DEBUG) << "success request with no timeout";
 	}
 	m_request_map.insert(std::make_pair(rc->event_id,rc));
 	return 0;
 }
 
 void ClientChannel::handleResponse(const azrpc::AzRpcResponse& response) {
-	LOG(DEBUG) << "handleResponse";
 	if( !response.has_event_id() || !response.has_error() ) {
 		LOG(WARNING) << "incompleted AzRpcResponse";
 		return;
@@ -180,25 +175,21 @@ void ClientChannel::handleResponse(const azrpc::AzRpcResponse& response) {
 	}
 
 	RpcError err = response.error();
-	const std::string* err_msg = nullptr;
-	google::protobuf::Message* rep = nullptr;
+	std::string err_msg;
+	std::shared_ptr<google::protobuf::Message> rep;
 
 	if( response.has_err_msg() ) {
-		err_msg = &response.err_msg();
+		err_msg = response.err_msg();
 	}
 	if( it->second->response_descriptor && response.has_response() ) {
 		const std::string& bytes = response.response();
-		rep = build_message(it->second->response_descriptor,bytes.c_str(),bytes.size());
+		rep.reset(build_message(it->second->response_descriptor,bytes.c_str(),bytes.size()));
 		if( rep == nullptr ) {
 			err = PROTOCOL_ERROR;
 		}
 	}
 
 	cb->onResponse(err,err_msg,rep);
-
-	if( rep ) {
-		delete rep;
-	}
 }
 
 }

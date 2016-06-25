@@ -39,7 +39,6 @@ int ServerChannel::sendReply(zmsg_t** p_envelope,int64_t event_id,RpcError err,c
 
 
 int ServerChannel::bind(const std::string& address) {
-	LOG(DEBUG) << "ServerChannel bind: " << address;
 	return zsock_bind(m_zsock,"%s",address.c_str());
 }
 
@@ -63,7 +62,6 @@ void ServerChannel::stop() {
 }
 
 void ServerChannel::handleReadable() {
-	LOG(DEBUG) << "handleReadable";
 	zmsg_t* envelope = m_zp.envelope(m_zsock);
 	std::unique_ptr<azrpc::AzRpcRequest> request( (azrpc::AzRpcRequest*)m_zp.recv(m_zsock,azrpc::AzRpcRequest::descriptor()));
 	zsock_flush(m_zsock);
