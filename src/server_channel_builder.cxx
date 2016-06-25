@@ -1,3 +1,4 @@
+#include <g3log/g3log.hpp>
 #include "azrpc/server_channel_builder.hpp"
 #include "ev_looper_adapter.hpp"
 #include "server_channel.hpp"
@@ -21,17 +22,12 @@ ServerChannelBuilder& ServerChannelBuilder::bind(const std::string& address) {
 }
 
 std::shared_ptr<IServerChannel> ServerChannelBuilder::build() {
-	if( m_loop_adapter == nullptr || m_address.empty() ) {
-		return nullptr;
-	}
+	CHECK( m_loop_adapter != nullptr);
+	CHECK( !m_address.empty() );
 
 	std::shared_ptr<ServerChannel> channel(new ServerChannel());
-	if( -1 == channel->bind(m_address) ) {
-		return nullptr;
-	}
-	if( -1 == channel->start(m_loop_adapter) ) {
-	   return nullptr;
-	}
+	CHECK( -1 != channel->bind(m_address) );
+	CHECK( -1 != channel->start(m_loop_adapter) );
 	return channel;
 }
 

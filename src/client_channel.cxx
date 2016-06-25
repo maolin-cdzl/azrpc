@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include <vector>
 #include <memory>
+#include <g3log/g3log.hpp>
 #include "client_channel.hpp"
 #include "clock.hpp"
 #include "azrpc.pb.h"
@@ -44,12 +45,15 @@ void ClientChannel::stop() {
 }
 
 void ClientChannel::handleReadable() {
+	LOG(DEBUG) << "ClientChannel::handleReadable";
 	int zevents = zsock_events(m_zsock);
 
 	while( zevents & ZMQ_POLLIN ) {
 		std::unique_ptr<azrpc::AzRpcResponse> response((azrpc::AzRpcResponse*)m_zp.recv(m_zsock));
 		if( response ) {
 			handleResponse(*response);
+		} else {
+			LOG(WARNING) << "Error when read AzRpcResponse";
 		}
 		zevents = zsock_events(m_zsock);
 	}
@@ -109,12 +113,14 @@ int ClientChannel::callMethod(
 		const google::protobuf::Message* argument,
 		const std::shared_ptr<IAzRpcCallback>& callback,
 		int32_t timeout) {
+	LOG(DEBUG) << "ClientChannel::callMethod";
 	azrpc::AzRpcRequest request;
 	request.set_event_id(m_eid_generator.next());
-	request.set_service_name(method->service()->name());
+	request.set_service_name(method->service()->full_name());
 	request.set_method_name(method->name());
 	if( argument ) {
 		if( ! argument->SerializeToString(&m_msg_cache) ) {
+			LOG(WARNING) << "argument serialize failed";
 			return -1;
 		}
 		if( ! m_msg_cache.empty() ) {
@@ -123,6 +129,7 @@ int ClientChannel::callMethod(
 	}
 
 	if( -1 == m_zp.send(m_zsock,&request,true,ZMQ_DONTWAIT) ) {
+		LOG(WARNING) << "Send request failed";
 		return -1;
 	}
 
@@ -135,20 +142,25 @@ int ClientChannel::callMethod(
 	if( timeout != 0 ) {
 		rc->deadline = clock_time() + timeout;
 		m_deadline_map.insert(std::make_pair(rc->deadline,rc->event_id));
+		LOG(DEBUG) << "success request with timeout in " << timeout;
 	} else {
 		rc->deadline = 0;
+		LOG(DEBUG) << "success request with no timeout";
 	}
 	m_request_map.insert(std::make_pair(rc->event_id,rc));
 	return 0;
 }
 
 void ClientChannel::handleResponse(const azrpc::AzRpcResponse& response) {
+	LOG(DEBUG) << "handleResponse";
 	if( !response.has_event_id() || !response.has_error() ) {
+		LOG(WARNING) << "incompleted AzRpcResponse";
 		return;
 	}
 
 	auto it = m_request_map.find(response.event_id());
 	if( it == m_request_map.end() ) {
+		LOG(WARNING) << "Can not found pending event_id";
 		// maybe timeout
 		return;
 	}
@@ -162,6 +174,7 @@ void ClientChannel::handleResponse(const azrpc::AzRpcResponse& response) {
 
 	std::shared_ptr<IAzRpcCallback> cb = rc->callback.lock();
 	if( cb == nullptr ) {
+		LOG(WARNING) << "Can not get callback";
 		// callback object already destroy or there is no callback setup
 		return;
 	}

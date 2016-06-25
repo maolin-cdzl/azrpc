@@ -121,7 +121,7 @@ void ServiceGenerator::GenerateMethodSignatures(
     } else {
       printer->Print(
           sub_vars,
-          "$virtual$void $name$(const std::shared_ptr<google::protobuf::Message>& argument,\n"
+          "$virtual$void $name$(const std::shared_ptr<$input_type$>& argument,\n"
           "                     const std::shared_ptr<azrpc::Reply>& reply);\n");
     }
   }
@@ -187,7 +187,7 @@ void ServiceGenerator::GenerateNotImplementedMethods(io::Printer* printer) {
     sub_vars["output_type"] = ClassName(method->output_type(), true);
 
     printer->Print(sub_vars,
-      "void $classname$::$name$(const std::shared_ptr<google::protobuf::Message>& argument,\n"
+      "void $classname$::$name$(const std::shared_ptr<$input_type$>& argument,\n"
       "                         const std::shared_ptr<azrpc::Reply>& reply) {\n"
       "  reply->sendError(azrpc::NO_IMPLEMENTED,\n"
       "              \"Method $name$() not implemented.\");\n"
