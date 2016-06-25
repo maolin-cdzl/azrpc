@@ -4,6 +4,7 @@ add_library(azrpc STATIC
 	azrpc_types.cxx
 	clock.cxx
 	ev_looper_adapter.cxx
+	zlooper_adapter.cxx
 	client_channel.cxx
 	eventid_generator.cxx
 	client_channel_builder.cxx
@@ -12,6 +13,7 @@ add_library(azrpc STATIC
 	server_channel_builder.cxx
 	clock.hpp
 	ev_looper_adapter.hpp
+	zlooper_adapter.hpp
 	client_channel.hpp
 	eventid_generator.hpp
 	server_channel.hpp

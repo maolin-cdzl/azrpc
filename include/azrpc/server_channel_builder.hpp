@@ -1,6 +1,7 @@
 #pragma once
 
 #include <ev.h>
+#include <czmq.h>
 #include "azrpc/i_looper_adapter.hpp"
 #include "azrpc/i_server_channel.hpp"
 
@@ -12,6 +13,8 @@ public:
 	ServerChannelBuilder& withLoop(const std::shared_ptr<ILooperAdapter>& adapter);
 
 	ServerChannelBuilder& withEvLoop(struct ev_loop* loop);
+
+	ServerChannelBuilder& withZLoop(zloop_t* loop);
 
 	ServerChannelBuilder& bind(const std::string& address);
 
