@@ -1,11 +1,13 @@
 #include <assert.h>
 #include "ev_looper_adapter.hpp"
+#include "clock.hpp"
 
 namespace azrpc {
 
 EvLooperAdapter::EvLooperAdapter(struct ev_loop* loop) :
 	m_ev_loop(loop),
-	m_zsock(nullptr)
+	m_zsock(nullptr),
+	m_timer_timeout(0)
 {
 }
 
@@ -27,6 +29,9 @@ void EvLooperAdapter::registerChannel(zsock_t* zsock,
 
 	ev_init(&m_timer_watcher,&TimerWatcherCallback);
 	m_timer_watcher.data = this;
+	m_timer_watcher.repeat = 0.005f; 
+	ev_timer_again(m_ev_loop,&m_timer_watcher);
+
 }
 
 void EvLooperAdapter::unregisterChannel() {
@@ -38,13 +43,11 @@ void EvLooperAdapter::unregisterChannel() {
 }
 
 void EvLooperAdapter::setTimer(int64_t timeout) {
-	double evtime = timeout / 1000.0f;
-	m_timer_watcher.repeat = evtime;
-	ev_timer_again(m_ev_loop,&m_timer_watcher);
+	m_timer_timeout = clock_time() + timeout;
 }
 
 void EvLooperAdapter::cancelTimer() {
-	ev_timer_stop(m_ev_loop,&m_timer_watcher);
+	m_timer_timeout = 0;
 }
 
 void EvLooperAdapter::ZmqWatcherCallback(struct ev_loop* loop,ev_zmq* w,int events) {
@@ -59,7 +62,12 @@ void EvLooperAdapter::TimerWatcherCallback(struct ev_loop* loop,ev_timer* w,int 
 	(void) loop;
 	if( EV_TIMEOUT & events ) {
 		EvLooperAdapter* self = (EvLooperAdapter*)w->data;
-		self->m_cb_timer();
+		if( self->m_timer_timeout != 0 ) {
+			const uint64_t now = clock_time();
+			if( now >= self->m_timer_timeout ) {
+				self->m_cb_timer();
+			}
+		}
 	}
 }
 

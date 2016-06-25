@@ -31,6 +31,7 @@ private:
 	
 	struct ev_zmq				m_zmq_watcher;
 	struct ev_timer				m_timer_watcher;
+	uint64_t					m_timer_timeout;
 };
 
 
