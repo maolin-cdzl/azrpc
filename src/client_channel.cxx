@@ -77,7 +77,7 @@ void ClientChannel::handleTimeout() {
 	for(auto it = events.begin(); it != events.end(); ++it) {
 		auto cb = (*it)->callback.lock();
 		if( cb ) {
-			cb->onResponse(TIMEOUT,nullptr,nullptr);
+			cb->onResponse(TIMEOUT,"timeout",nullptr);
 		}
 	}
 
@@ -140,6 +140,7 @@ int ClientChannel::callMethod(
 	if( timeout != 0 ) {
 		rc->deadline = clock_time() + timeout;
 		m_deadline_map.insert(std::make_pair(rc->deadline,rc->event_id));
+		checkSetTimer();
 	} else {
 		rc->deadline = 0;
 	}

@@ -94,6 +94,24 @@ void test_withZ() {
 	g_z_callback.reset();
 }
 
+void test_Timeout() {
+	zloop_t* loop = zloop_new();
+	auto serverChannel = ServerChannelBuilder().withZLoop(loop).bind("tcp://127.0.0.1:5555").build();
+	CHECK(serverChannel != nullptr) << "serverChannel build failed.";
+
+	
+	serverChannel->registerService(std::shared_ptr<IService>(new NonSearchServiceImpl()));
+
+	test::SearchService_Stub stub(ClientChannelBuilder().withZLoop(loop).connect("tcp://127.0.0.1:5555").build());
+	std::shared_ptr<SearchCallback> callback(new SearchCallback());
+	
+	test::SearchRequest request;
+	request.set_query("gold");
+	stub.Search(&request,callback,1000);
+
+	zloop_start(loop);
+}
+
 int main(int argc,char* argv[]) {
 	std::unique_ptr<g3::LogWorker> logworker {g3::LogWorker::createLogWorker()};
 	auto sinkHandle = logworker->addSink(std2::make_unique<ColorCoutSink >(),&ColorCoutSink ::ReceiveLogMessage);
@@ -101,9 +119,11 @@ int main(int argc,char* argv[]) {
 	LOG(INFO) << "Test start...";
 	zsys_init();
 
-	test_withEv();
-	sleep(1);
-	test_withZ();
+	test_Timeout();
+
+	//test_withEv();
+	//sleep(1);
+	//test_withZ();
 	return 0;
 }
 

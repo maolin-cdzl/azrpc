@@ -48,3 +48,17 @@ class SearchServiceImpl : public test::SearchService {
 	}
 };
 
+class NonSearchServiceImpl : public test::SearchService {
+	virtual void Search(const std::shared_ptr<test::SearchRequest>& request,const std::shared_ptr<azrpc::Reply>& reply) {
+		LOG(INFO) << "got request for " << request->query();
+	}
+};
+
+class SearchCallback : public azrpc::IAzRpcCallback {
+public:
+	virtual void onResponse(RpcError err,const std::string& err_msg,const std::shared_ptr<google::protobuf::Message>& response) {
+		LOG(INFO) << "got callback,err:" << err << " " << err_msg;
+	}
+};
+
+

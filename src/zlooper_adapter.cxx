@@ -17,6 +17,7 @@ int ZLooperAdapter::TimerCallback(zloop_t* loop,int timer_id,void* arg) {
 	if( self->m_timer_timeout != 0 ) {
 		const uint64_t now = clock_time();
 		if( now >= self->m_timer_timeout ) {
+			self->m_timer_timeout = 0;
 			self->m_cb_timer();
 		}
 	}
