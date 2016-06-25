@@ -17,6 +17,7 @@ ClientChannelBuilder& ClientChannelBuilder::withEvLoop(struct ev_loop* loop) {
 
 ClientChannelBuilder& ClientChannelBuilder::withZLoop(zloop_t* loop) {
 	m_loop_adapter.reset(new ZLooperAdapter(loop));
+	return *this;
 }
 
 ClientChannelBuilder& ClientChannelBuilder::connect(const std::string& address) {
