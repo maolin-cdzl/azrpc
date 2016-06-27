@@ -1,7 +1,7 @@
 #pragma once
 
 #include <czmq.h>
-#include "zeputils/ev_zmq.h"
+#include "etutils/zep/ev_zmq.h"
 #include "azrpc/i_looper_adapter.hpp"
 
 namespace azrpc {

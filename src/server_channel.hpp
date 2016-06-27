@@ -3,7 +3,7 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
-#include "zeputils/zprotobuf.hpp"
+#include "etutils/zep/zprotobuf.hpp"
 #include "azrpc/i_server_channel.hpp"
 #include "azrpc/i_looper_adapter.hpp"
 
@@ -35,7 +35,7 @@ private:
 	std::unordered_map<std::string,std::shared_ptr<IService>>	m_service_map;
 	std::shared_ptr<ILooperAdapter>				m_loop_adapter;
 	zsock_t*									m_zsock;
-	ZProtobuf									m_zp;
+	etutils::ZProtobuf							m_zp;
 };
 
 

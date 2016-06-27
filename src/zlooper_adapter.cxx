@@ -1,6 +1,6 @@
 #include <g3log/g3log.hpp>
 #include "zlooper_adapter.hpp"
-#include "clock.hpp"
+#include "etutils/common/time.hpp"
 
 namespace azrpc {
 
@@ -15,7 +15,7 @@ int ZLooperAdapter::TimerCallback(zloop_t* loop,int timer_id,void* arg) {
 	(void)loop;
 	ZLooperAdapter* self = (ZLooperAdapter*)arg;
 	if( self->m_timer_timeout != 0 ) {
-		const uint64_t now = clock_time();
+		const uint64_t now = etutils::up_time();
 		if( now >= self->m_timer_timeout ) {
 			self->m_timer_timeout = 0;
 			self->m_cb_timer();
@@ -59,7 +59,7 @@ void ZLooperAdapter::unregisterChannel() {
 }
 
 void ZLooperAdapter::setTimer(int64_t timeout) {
-	m_timer_timeout = clock_time() + timeout;
+	m_timer_timeout = etutils::up_time() + timeout;
 }
 
 void ZLooperAdapter::cancelTimer() {

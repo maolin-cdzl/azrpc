@@ -3,7 +3,7 @@
 #include <memory>
 #include <g3log/g3log.hpp>
 #include "client_channel.hpp"
-#include "clock.hpp"
+#include "etutils/common/time.hpp"
 #include "azrpc.pb.h"
 
 #include "azrpc/i_azrpc_callback.hpp"
@@ -60,7 +60,7 @@ void ClientChannel::handleReadable() {
 }
 
 void ClientChannel::handleTimeout() {
-	const int64_t now = clock_time();
+	const int64_t now = etutils::up_time();
 	std::vector<std::shared_ptr<RemoteCallEntry>> events;
 	for(auto it = m_deadline_map.begin(); it != m_deadline_map.end();) {
 		if( it->first > now ) {
@@ -86,7 +86,7 @@ void ClientChannel::handleTimeout() {
 
 int64_t ClientChannel::getTimeout() {
 	if( !m_deadline_map.empty() ) {
-		const int64_t now = clock_time();
+		const int64_t now = etutils::up_time();
 		auto it = m_deadline_map.begin();
 		if( it->first > now ) {
 			return it->first - now;
@@ -138,7 +138,7 @@ int ClientChannel::callMethod(
 		rc->callback = callback;
 	}
 	if( timeout != 0 ) {
-		rc->deadline = clock_time() + timeout;
+		rc->deadline = etutils::up_time() + timeout;
 		m_deadline_map.insert(std::make_pair(rc->deadline,rc->event_id));
 		checkSetTimer();
 	} else {
@@ -184,7 +184,7 @@ void ClientChannel::handleResponse(const azrpc::AzRpcResponse& response) {
 	}
 	if( it->second->response_descriptor && response.has_response() ) {
 		const std::string& bytes = response.response();
-		rep.reset(build_message(it->second->response_descriptor,bytes.c_str(),bytes.size()));
+		rep.reset(etutils::build_message(it->second->response_descriptor,bytes.c_str(),bytes.size()));
 		if( rep == nullptr ) {
 			err = PROTOCOL_ERROR;
 		}

@@ -95,7 +95,7 @@ void ServerChannel::handleReadable() {
 		}
 		std::shared_ptr<google::protobuf::Message> input;
 		if( input_type ) {
-			input.reset(build_message(input_type,request->argument().c_str(),request->argument().size()));
+			input.reset(etutils::build_message(input_type,request->argument().c_str(),request->argument().size()));
 			if( input == nullptr ) {
 				LOG(WARNING) << "unserialize argument failed: " << input_type->full_name();
 				break;

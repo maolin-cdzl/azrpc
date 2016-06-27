@@ -1,6 +1,6 @@
 #include <assert.h>
 #include "ev_looper_adapter.hpp"
-#include "clock.hpp"
+#include "etutils/common/time.hpp"
 
 namespace azrpc {
 
@@ -43,7 +43,7 @@ void EvLooperAdapter::unregisterChannel() {
 }
 
 void EvLooperAdapter::setTimer(int64_t timeout) {
-	m_timer_timeout = clock_time() + timeout;
+	m_timer_timeout = etutils::up_time() + timeout;
 }
 
 void EvLooperAdapter::cancelTimer() {
@@ -63,7 +63,7 @@ void EvLooperAdapter::TimerWatcherCallback(struct ev_loop* loop,ev_timer* w,int 
 	if( EV_TIMEOUT & events ) {
 		EvLooperAdapter* self = (EvLooperAdapter*)w->data;
 		if( self->m_timer_timeout != 0 ) {
-			const uint64_t now = clock_time();
+			const uint64_t now = etutils::up_time();
 			if( now >= self->m_timer_timeout ) {
 				self->m_timer_timeout = 0;
 				self->m_cb_timer();

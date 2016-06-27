@@ -2,7 +2,6 @@ protobuf_generate_cpp(AZRPC_PB_SRCS AZRPC_PB_HDRS proto/azrpc.proto)
 
 add_library(azrpc STATIC
 	azrpc_types.cxx
-	clock.cxx
 	ev_looper_adapter.cxx
 	zlooper_adapter.cxx
 	client_channel.cxx
@@ -11,7 +10,6 @@ add_library(azrpc STATIC
 	reply.cxx
 	server_channel.cxx
 	server_channel_builder.cxx
-	clock.hpp
 	ev_looper_adapter.hpp
 	zlooper_adapter.hpp
 	client_channel.hpp
@@ -39,7 +37,7 @@ target_include_directories(azrpc
 target_compile_definitions(azrpc PRIVATE _POSIX_C_SOURCE=200809L )
 
 target_link_libraries(azrpc PUBLIC
-	zeputils
+	etutils
 	czmq
 	zmq
 	protobuf

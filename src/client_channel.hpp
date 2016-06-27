@@ -8,7 +8,7 @@
 #include <google/protobuf/descriptor.h>
 #include <ev.h>
 #include <czmq.h>
-#include "zeputils/zprotobuf.hpp"
+#include "etutils/zep/zprotobuf.hpp"
 #include "azrpc/i_client_channel.hpp"
 #include "eventid_generator.hpp"
 #include "azrpc.pb.h"
@@ -55,7 +55,7 @@ private:
 private:
 	std::shared_ptr<ILooperAdapter>				m_loop_adapter;
 	zsock_t*									m_zsock;
-	ZProtobuf									m_zp;
+	etutils::ZProtobuf							m_zp;
 	std::string									m_msg_cache;
 	EventIdGenerator							m_eid_generator;
 	std::map<int64_t,int64_t>					m_deadline_map;
