@@ -3,7 +3,7 @@
 
 namespace azrpc {
 
-Reply::Reply(IServerChannel* channel,zmsg_t** p_envelope,const google::protobuf::Descriptor* descriptor,int64_t id) :
+Reply::Reply(IServerChannel* channel,zmsg_t** p_envelope,const google::protobuf::Descriptor* descriptor,uint64_t id) :
 	m_channel(channel),
 	m_descriptor(descriptor),
 	m_event_id(id),
@@ -18,7 +18,7 @@ Reply::~Reply() {
 	}
 }
 
-int64_t Reply::event_id() const {
+uint64_t Reply::event_id() const {
 	return m_event_id;
 }
 

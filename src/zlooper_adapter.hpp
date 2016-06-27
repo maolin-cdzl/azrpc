@@ -17,7 +17,7 @@ public:
 
 	virtual void unregisterChannel();
 
-	virtual void setTimer(int64_t timeout);
+	virtual void setTimer(uint64_t timeout);
 	virtual void cancelTimer();
 private:
 	static int ReadableCallback(zloop_t* loop,zsock_t* sock,void* arg);

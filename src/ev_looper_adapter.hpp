@@ -17,7 +17,7 @@ public:
 
 	virtual void unregisterChannel();
 
-	virtual void setTimer(int64_t timeout);
+	virtual void setTimer(uint64_t timeout);
 	virtual void cancelTimer();
 private:
 	static void ZmqWatcherCallback(struct ev_loop* loop,ev_zmq* w,int events);

@@ -13,12 +13,6 @@ static void sigint_cb (struct ev_loop *loop, ev_signal *w, int revents) {
 	ev_break (loop, EVBREAK_ALL);
 }
 
-static int64_t get_time_now(void) {
-	struct timespec tv;
-    clock_gettime(CLOCK_MONOTONIC,&tv);
-    return (int64_t) (tv.tv_sec * 1000 + tv.tv_nsec / 1000000);
-}
-
 struct ColorCoutSink {
 	// Linux xterm color
 	// http://stackoverflow.com/questions/2616906/how-do-i-output-coloured-text-to-a-linux-terminal

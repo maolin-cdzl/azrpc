@@ -20,7 +20,7 @@ void ServerChannel::registerService(const std::shared_ptr<IService>& service) {
 	m_service_map.insert(std::make_pair(service->GetDescriptor()->full_name(),service));
 }
 
-int ServerChannel::sendReply(zmsg_t** p_envelope,int64_t event_id,RpcError err,const std::string& err_msg,const std::string& response) {
+int ServerChannel::sendReply(zmsg_t** p_envelope,uint64_t event_id,RpcError err,const std::string& err_msg,const std::string& response) {
 	azrpc::AzRpcResponse msg;
 	msg.set_event_id(event_id);
 	msg.set_error((azrpc::AzRpcResponse_RpcError)err);

@@ -20,8 +20,8 @@ class ILooperAdapter;
 class ClientChannel;
 
 struct RemoteCallEntry {
-	int64_t										event_id;
-	int64_t										deadline;
+	uint64_t									event_id;
+	uint64_t									deadline;
 	const google::protobuf::Descriptor*			response_descriptor;
 	std::weak_ptr<IAzRpcCallback>				callback;
 };
@@ -48,7 +48,7 @@ private:
 
 	void handleReadable();
 	void handleTimeout();
-	int64_t getTimeout();
+	uint64_t getTimeout();
 	void checkSetTimer();
 
 	void handleResponse(const azrpc::AzRpcResponse& response);
@@ -58,8 +58,8 @@ private:
 	etutils::ZProtobuf							m_zp;
 	std::string									m_msg_cache;
 	EventIdGenerator							m_eid_generator;
-	std::map<int64_t,int64_t>					m_deadline_map;
-	std::unordered_map<int64_t,std::shared_ptr<RemoteCallEntry>>	m_request_map;
+	std::map<uint64_t,uint64_t>					m_deadline_map;
+	std::unordered_map<uint64_t,std::shared_ptr<RemoteCallEntry>>	m_request_map;
 };
 
 

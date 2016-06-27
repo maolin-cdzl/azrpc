@@ -16,7 +16,7 @@ public:
 	virtual void unregisterChannel() = 0;
 
 	// note,there is only 1 timer needed,but setTimer will be called frequently
-	virtual void setTimer(int64_t timeout) = 0;
+	virtual void setTimer(uint64_t timeout) = 0;
 	virtual void cancelTimer() = 0;
 };
 

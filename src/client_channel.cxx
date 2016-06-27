@@ -60,7 +60,7 @@ void ClientChannel::handleReadable() {
 }
 
 void ClientChannel::handleTimeout() {
-	const int64_t now = etutils::up_time();
+	const uint64_t now = etutils::up_time();
 	std::vector<std::shared_ptr<RemoteCallEntry>> events;
 	for(auto it = m_deadline_map.begin(); it != m_deadline_map.end();) {
 		if( it->first > now ) {
@@ -84,9 +84,9 @@ void ClientChannel::handleTimeout() {
 	checkSetTimer();
 }
 
-int64_t ClientChannel::getTimeout() {
+uint64_t ClientChannel::getTimeout() {
 	if( !m_deadline_map.empty() ) {
-		const int64_t now = etutils::up_time();
+		const uint64_t now = etutils::up_time();
 		auto it = m_deadline_map.begin();
 		if( it->first > now ) {
 			return it->first - now;
@@ -99,7 +99,7 @@ int64_t ClientChannel::getTimeout() {
 }
 
 void ClientChannel::checkSetTimer() {
-	int64_t timeout = getTimeout();
+	uint64_t timeout = getTimeout();
 	if( timeout > 0 ) {
 		m_loop_adapter->setTimer(timeout);
 	} else {

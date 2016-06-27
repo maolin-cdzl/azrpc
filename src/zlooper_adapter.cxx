@@ -58,7 +58,7 @@ void ZLooperAdapter::unregisterChannel() {
 	}
 }
 
-void ZLooperAdapter::setTimer(int64_t timeout) {
+void ZLooperAdapter::setTimer(uint64_t timeout) {
 	m_timer_timeout = etutils::up_time() + timeout;
 }
 

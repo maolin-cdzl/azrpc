@@ -1,3 +1,4 @@
+#include "etutils/common/time.hpp"
 #include "test_common.h"
 #include "azrpc/client_channel_builder.hpp"
 #include "azrpc/server_channel_builder.hpp"
@@ -36,7 +37,7 @@ void test_withEv() {
 	g_ev_callback.reset(new EvSearchCallback());
 	
 	g_count = 0;
-	uint64_t tv_start = get_time_now();
+	uint64_t tv_start = etutils::up_time();
 	for(size_t i=0; i < PARALISM_HINT; ++i) {
 		test::SearchRequest request;
 		request.set_query("gold");
@@ -45,7 +46,7 @@ void test_withEv() {
 
 	ev_run(loop,0);
 
-	uint64_t tv_end = get_time_now();
+	uint64_t tv_end = etutils::up_time();
 
 	LOG(INFO) << "paralism: " << PARALISM_HINT << ", performent " << g_count << " in " << (tv_end - tv_start) << " ms";
 	g_ev_stub.reset();
@@ -78,7 +79,7 @@ void test_withZ() {
 	g_z_callback.reset(new ZSearchCallback());
 	
 	g_count = 0;
-	uint64_t tv_start = get_time_now();
+	uint64_t tv_start = etutils::up_time();
 	for(size_t i=0; i < PARALISM_HINT; ++i) {
 		test::SearchRequest request;
 		request.set_query("gold");
@@ -87,7 +88,7 @@ void test_withZ() {
 
 	zloop_start(loop);
 
-	uint64_t tv_end = get_time_now();
+	uint64_t tv_end = etutils::up_time();
 
 	LOG(INFO) << "paralism: " << PARALISM_HINT << ", performent " << g_count << " in " << (tv_end - tv_start) << " ms";
 	g_z_stub.reset();

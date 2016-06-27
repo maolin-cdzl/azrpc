@@ -13,13 +13,13 @@ class IServerChannel;
 
 class Reply{
 public:
-	Reply(IServerChannel* channel,zmsg_t** p_envelope,const google::protobuf::Descriptor* descriptor,int64_t id); 
+	Reply(IServerChannel* channel,zmsg_t** p_envelope,const google::protobuf::Descriptor* descriptor,uint64_t id); 
 	~Reply();
 
 	Reply(const Reply&) = delete;
 	Reply& operator = (const Reply&) = delete;
 
-	int64_t event_id() const;
+	uint64_t event_id() const;
 	const google::protobuf::Descriptor* descriptor() const;
 
 	int sendReply(const google::protobuf::Message* res) throw(BadReplyMessage);
@@ -29,7 +29,7 @@ public:
 private:
 	IServerChannel*								m_channel;
 	const google::protobuf::Descriptor*			m_descriptor;
-	const int64_t								m_event_id;
+	const uint64_t								m_event_id;
 	zmsg_t*										m_envelope;
 };
 

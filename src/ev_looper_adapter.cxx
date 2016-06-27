@@ -42,7 +42,7 @@ void EvLooperAdapter::unregisterChannel() {
 	}
 }
 
-void EvLooperAdapter::setTimer(int64_t timeout) {
+void EvLooperAdapter::setTimer(uint64_t timeout) {
 	m_timer_timeout = etutils::up_time() + timeout;
 }
 
